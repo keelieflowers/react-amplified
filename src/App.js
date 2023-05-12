@@ -3,8 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import { createTodo } from './graphql/mutations';
 import { listTodos } from './graphql/queries';
+import { postToDataStore } from './datastore';
 
-const initialState = { name: '', description: '' };
+const initialState = {
+  name: '',
+  description: '',
+  dueDate: '',
+  category: '',
+  finished: false,
+};
 
 const App = () => {
   const [formState, setFormState] = useState(initialState);
@@ -35,6 +42,8 @@ const App = () => {
       setTodos([...todos, todo]);
       setFormState(initialState);
       await API.graphql(graphqlOperation(createTodo, { input: todo }));
+      console.log('Posting to datastore');
+      await postToDataStore(todo);
     } catch (err) {
       console.log('error creating todo:', err);
     }
@@ -55,6 +64,24 @@ const App = () => {
         value={formState.description}
         placeholder='Description'
       />
+      <input
+        onChange={(event) => setInput('dueDate', event.target.value)}
+        style={styles.input}
+        value={formState.dueDate}
+        placeholder='2022-05-01'
+      />
+      <input
+        onChange={(event) => setInput('category', event.target.value)}
+        style={styles.input}
+        value={formState.category}
+        placeholder='Category'
+      />
+      <input
+        onChange={(event) => setInput('finished', event.target.value)}
+        style={styles.input}
+        value={formState.finished}
+        placeholder=''
+      />
       <button style={styles.button} onClick={addTodo}>
         Create Todo
       </button>
@@ -62,6 +89,9 @@ const App = () => {
         <div key={todo.id ? todo.id : index} style={styles.todo}>
           <p style={styles.todoName}>{todo.name}</p>
           <p style={styles.todoDescription}>{todo.description}</p>
+          <p style={styles.todoDescription}>{todo.dueDate}</p>
+          <p style={styles.todoDescription}>{todo.category}</p>
+          <p style={styles.todoDescription}>{todo.finished}</p>
         </div>
       ))}
     </div>
