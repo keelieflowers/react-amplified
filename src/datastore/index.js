@@ -13,15 +13,3 @@ export async function postToDataStore(post) {
     console.log('Error saving post', error);
   }
 }
-
-// export async function getPosts() {
-//   try {
-//     const posts = await DataStore.query(Post);
-//     console.log(
-//       'Posts retrieved successfully!',
-//       JSON.stringify(posts, null, 2)
-//     );
-//   } catch (error) {
-//     console.log('Error retrieving posts', error);
-//   }
-// }
